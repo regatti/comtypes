@@ -126,16 +126,39 @@ class Dispatch(object):
         "QueryInterface is forwarded to the real com object."
         return self._comobj.QueryInterface(*args)
 
-    def __cmp__(self, other):
-        if not isinstance(other, Dispatch):
-            return 1
-        return cmp(self._comobj, other._comobj)
+    #def __cmp__(self, other):
+        #if not isinstance(other, Dispatch):
+            #return 1
+        #return cmp(self._comobj, other._comobj)
 
-    def __eq__(self, other):
+    #def __eq__(self, other):
+        #return isinstance(other, Dispatch) and self._comobj == other._comobj
+
+    #def __hash__(self):
+        #return hash(self._comobj)
+
+     def __eq__(self, other):
         return isinstance(other, Dispatch) and self._comobj == other._comobj
 
-    def __hash__(self):
-        return hash(self._comobj)
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __lt__(self, other):
+        # Implement the less-than comparison if needed
+        pass
+
+    def __le__(self, other):
+        # Implement the less-than-or-equal comparison if needed
+        pass
+
+    def __gt__(self, other):
+        # Implement the greater-than comparison if needed
+        pass
+
+    def __ge__(self, other):
+        # Implement the greater-than-or-equal comparison if needed
+        pass
+
 
     def __getattr__(self, name):
         """Get a COM attribute."""
