@@ -589,44 +589,72 @@ class _compointer_base(c_void_p, metaclass=_compointer_meta):
                 _debug("Release %s", self)
                 self.Release()
 
-    def __cmp__(self, other):
-        """Compare pointers to COM interfaces."""
+    #def __cmp__(self, other):
+        #"""Compare pointers to COM interfaces."""
         # COM identity rule
         #
         # XXX To compare COM interface pointers, should we
         # automatically QueryInterface for IUnknown on both items, and
         # compare the pointer values?
-        if not isinstance(other, _compointer_base):
-            return 1
+        #if not isinstance(other, _compointer_base):
+            #return 1
 
         # get the value property of the c_void_p baseclass, this is the pointer value
-        return cmp(
-            super(_compointer_base, self).value, super(_compointer_base, other).value
-        )
+        #return cmp(
+            #super(_compointer_base, self).value, super(_compointer_base, other).value
+        #)
 
-    def __eq__(self, other):
-        if not isinstance(other, _compointer_base):
-            return False
+    #def __eq__(self, other):
+        #if not isinstance(other, _compointer_base):
+            #return False
         # get the value property of the c_void_p baseclass, this is the pointer value
-        return (
-            super(_compointer_base, self).value == super(_compointer_base, other).value
-        )
+        #return (
+            #super(_compointer_base, self).value == super(_compointer_base, other).value
+        #)
 
-    def __hash__(self):
-        """Return the hash value of the pointer."""
+    #def __hash__(self):
+        #"""Return the hash value of the pointer."""
         # hash the pointer values
-        return hash(super(_compointer_base, self).value)
+        #return hash(super(_compointer_base, self).value)
 
     # redefine the .value property; return the object itself.
-    def __get_value(self):
+    #def __get_value(self):
+        #return self
+
+    #value = property(__get_value, doc="""Return self.""")
+
+    #def __repr__(self):
+        #ptr = super(_compointer_base, self).value
+        #return "<%s ptr=0x%x at %x>" % (self.__class__.__name__, ptr or 0, id(self))
+
+     def __eq__(self, other):
+        return self._are_pointers_equal(other)
+
+    def __hash__(self):
+        return self._hash_pointer_value()
+
+    @property
+    def value(self):
         return self
 
-    value = property(__get_value, doc="""Return self.""")
-
     def __repr__(self):
-        ptr = super(_compointer_base, self).value
-        return "<%s ptr=0x%x at %x>" % (self.__class__.__name__, ptr or 0, id(self))
+        return self._get_repr_string()
 
+    def _are_pointers_equal(self, other):
+        if not isinstance(other, _compointer_base):
+            return False
+        return super(_compointer_base, self).value == super(_compointer_base, other).value
+
+    def _hash_pointer_value(self):
+        return hash(super(_compointer_base, self).value)
+
+    def _get_repr_string(self):
+        ptr = super(_compointer_base, self).value
+        class_name = self.__class__.__name__
+        ptr_hex = ptr or 0
+        instance_id = id(self)
+        return f"<{class_name} ptr=0x{ptr_hex:x} at {instance_id:x}>"
+    
     # This fixes the problem when there are multiple python interface types
     # wrapping the same COM interface.  This could happen because some interfaces
     # are contained in multiple typelibs.
