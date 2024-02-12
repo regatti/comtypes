@@ -42,24 +42,41 @@ class GUID(Structure):
 
     __str__ = __unicode__
 
-    def __cmp__(self, other):
+    #def __cmp__(self, other):
+        #if isinstance(other, GUID):
+            #return cmp(binary(self), binary(other))
+        #return -1
+
+    #def __bool__(self):
+        #return self != GUID_null
+
+    #def __eq__(self, other):
+        #return isinstance(other, GUID) and binary(self) == binary(other)
+
+    #def __hash__(self):
+        # We make GUID instances hashable, although they are mutable.
+        #return hash(binary(self))
+
+    #def copy(self):
+        #return GUID(str(self))
+
+    def __eq__(self, other):
         if isinstance(other, GUID):
-            return cmp(binary(self), binary(other))
-        return -1
+            return binary(self) == binary(other)
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def __bool__(self):
         return self != GUID_null
 
-    def __eq__(self, other):
-        return isinstance(other, GUID) and binary(self) == binary(other)
-
     def __hash__(self):
-        # We make GUID instances hashable, although they are mutable.
         return hash(binary(self))
 
     def copy(self):
         return GUID(str(self))
-
+    
     @classmethod
     def from_progid(cls, progid):
         """Get guid from progid, ..."""
